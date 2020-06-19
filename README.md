@@ -4,8 +4,8 @@
 
 1. Erstellen Sie ein Programm, das die notwendigen Werte für  ein lineares Gleichungssystem mit **3 Variablen und 3 Gleichungen** abfragt und **in einer Datei** speichert.
 2. Erstellen Sie ein weiteres Programm, das
-  1. das Gleichungssystem mit dem Gauss-Algorithmus mit **Zeilenskalierung und Spaltenpivotisierung** löst und
-  2. die **Lösung grafisch darstellt**.
+    1. das Gleichungssystem mit dem Gauss-Algorithmus mit **Zeilenskalierung und Spaltenpivotisierung** löst und
+    2. die **Lösung grafisch darstellt**.
 
 ## Design
 
