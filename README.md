@@ -24,3 +24,6 @@
 
 * Erstellen Sie das Programm so, dass ein fremder Nutzer mit Ihrem Programm arbeiten kann und **Fehleingaben abgefangen** werden.
 * Gestalten Sie Ihr Programm so, **dass alle Informationen die der Nutzer benötigt, durch das Programm zur Verfügung gestellt werden**.
+
+
+
