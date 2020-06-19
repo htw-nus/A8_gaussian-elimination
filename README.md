@@ -1,3 +1,5 @@
+# Nie direkt in den master pushen!
+
 # A8_gaussian-elimination
 
 ## Aufgabenstellung
