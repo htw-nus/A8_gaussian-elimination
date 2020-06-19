@@ -14,7 +14,7 @@
   * zulässige Eingaben, Optionen die der Nutzer wählen kann
   * was wird augegeben, eventuelle Einschränkungen (Genauigkeit, Wahlmöglichkeiten durch den Nutzer)
 * Erstellen Sie das Programm so, dass:
-  * ein fremder Programmierer Ihr Programm verstehen, einbinden oder für seinen Bedarf anpassen kann.(**Kommentieren Sie, jede Programmzeile** so, das klar beschrieben ist, was in dieser Zeile passiert.)
+  * ein fremder Programmierer Ihr Programm verstehen, einbinden oder für seinen Bedarf anpassen kann. (**Kommentieren Sie, jede Programmzeile** so, dass klar beschrieben ist, was in dieser Zeile passiert.)
   * **Resulte (Ergebnisse, Grafiken, etc) bei Bedarf gespeichert werden können**.
   * Grafiken eindeutig, gut lesbar und verständlich beschriftet sind.
 
