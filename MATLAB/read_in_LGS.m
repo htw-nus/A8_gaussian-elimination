@@ -1,8 +1,10 @@
 %% Read in User Input
 % This script reads in a 3x3-Matrix and a 3x1-Vector
 % Features:
-    % Checks the Input Size and repeats the request if the size is not
-    % valid
+    % Make the user repeat the input if the input
+        % has the wrong size
+        % is linear dependend
+        % contains non-numeric values
     % transposes a 1x3-Vector into a 3x1-Vector
     % Valid Input sizes can be changed in the variables section as desired
 % Output: clean 3x3-Matrix and a clean 3x1-Vector
@@ -36,14 +38,18 @@ VecRepeater = 0;
 %% Error Messages
 
 % not a Matrix of the desired size
-err.WrongSizeMat = ['Error. Input must be a [' num2str(MatSize(1)) ']x'...
-    '[' num2str(MatSize(2)) ']-Matrix.\n'];
-% non-numerical input
-err.WrongType = ['Error. Input must be numeric only.'];
+err.WrongSizeMat = ['Error.\nInput must be a [' num2str(MatSize(1)) ']x'...
+    '[' num2str(MatSize(2)) ']-Matrix.\n\n'];
 % not a Vector of the desired size
-err.WrongSizeVec = ['Error. Input must be a [' num2str(VecSize(1)) ']x'...
+err.WrongSizeVec = ['Error.\nInput must be a [' num2str(VecSize(1)) ']x'...
     '[' num2str(VecSize(2)) ']- or [' num2str(VecSizeAlt(1)) ']x'...
-    '[' num2str(VecSizeAlt(2)) ']-Vector.\n'];
+    '[' num2str(VecSizeAlt(2)) ']-Vector.\n\n'];
+% non-numerical input
+err.WrongType = sprintf(['Error.\nInput must be numeric only.\n\n']);
+% linear dependent
+err.LinDep= sprintf(['Error.\nThe given Matrix is linear dependent and\n'...
+    'therefor has an infinite amount of solutions.\n\n'...
+    'Please enter a linear independent Matrix\n\n']);
 
 
 %% Input Matrix
@@ -70,6 +76,14 @@ while ~MatRepeater
         clc;
         % Inform user about the error
         disp(err.WrongType);
+    % check if the vectors are linear independent
+    elseif det(MatUser) == 0
+        % if input is linear dependent make the user repeat the input
+        MatRepeater = 0;
+        % clear command window
+        clc;
+        % Inform user about the error
+        disp(err.LinDep);
     else
         % if FALSE exit while loop
         MatRepeater = 1;
