@@ -136,12 +136,16 @@ clearvars -except UserInput;
 % clear command window
 clc;
 
-%% Solver
-
-%% Variables
+%% Variables Merge
 
 % Combining the user input into an system of linear equations
 MatInput = [UserInput.Mat UserInput.Vec];
+
+%% Spaltenpivotisierung
+
+%% Zeilenskalierung
+
+%% Solver
 
 %% Plot
 
