@@ -229,7 +229,7 @@ end
 
 %% Export Data
 % Error Messages
-% not a Matrix of the desired size
+% not a y/n Input
 err.WrongInput = sprintf(['Error.\n I could not understand you.'...
     '\n\n']);
 % repeater to re-prompt the user until a valid input is given
