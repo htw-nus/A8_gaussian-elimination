@@ -119,7 +119,7 @@ while ~VecRepeater
 % ask the user to input a 3x1-Vector with instructions
     VecUser = input(['Enter your [' num2str(VecSize(1)) ']x'...
     '[' num2str(VecSize(2)) ']- or [' num2str(VecSizeAlt(1)) ']x'...
-    '[' num2str(VecSizeAlt(2)) ']-Vector b. (e.g. [1 2 3]): \n\n']);
+    '[' num2str(VecSizeAlt(2)) ']-Vector b. (e.g. [9 8 7]): \n\n']);
     % check if input is not a 3x1- or 1x3-Vector
     if (~isequal(size(VecUser), VecSize) &...
             ~isequal(size(VecUser), VecSizeAlt))
@@ -222,6 +222,9 @@ if sum(isnan(X))> 0
     % and repeat the while-loop
     ScriptRepeater = 0;
 else
+    % Display the result
+    disp('The result for x is:');
+    disp(X);
     % else, leave the while-loop
     ScriptRepeater = 1;
 end
@@ -266,7 +269,7 @@ while ~ExportRepeater
     % else, the input is not valid
     else
         % if input is not valid make the user repeat the input
-        MatRepeater = 0;
+        ExportRepeater = 0;
         % clear command window
         clc;
         % Inform user about the error
@@ -274,7 +277,213 @@ while ~ExportRepeater
     end
 end
 
+% clear unnecessary vars
+clearvars -except err m UserInput X;
+
 
 %% Plot
+% Only show a plot if the third column contains no zeros
+err.NoPlot = sprintf(['If you want to see a plot, please enter a Matrix\n'...
+    'with only nonzero elements in the third column.\n\n']);
+% Variable if User wants to see the plot
+GraphIt = 0;
+% Check if third column contains zeros
+ZeroCheck = sum(UserInput.Mat(:,3) == 0);
+% Only show a plot if m = 3
+if m == 3
+    % Only show a plot if the input can be solved for z
+    if ZeroCheck == 0
+        % repeater to re-prompt the user until a valid input is given
+        plotRepeater = 0;
+        % while 'repeater' is not TRUE
+        while ~plotRepeater
+        % ask the user if the data should be exported
+            PlotIt = input(['\n\nDo you want to see a plot of your'...
+                ' system of linear equations? (y/n)\n\n'], 's');
+            % save string in lowercase letters
+            PlotIt = lower(PlotIt);
+            % check if the user wants to export the data
+            if PlotIt == 'y'
+                % if TRUE export the data
+                plotRepeater = 1;
+                % Variable to show the Plot
+                GraphIt = 1;
+                % clear command window
+                clc;
+                % Inform the user about the export
+                disp('Your plot will open in an seperate window.');
+            % if he does not want to export the data
+            elseif PlotIt == 'n'
+                % if TRUE export the data
+                plotRepeater = 1;
+                % clear command window
+                clc;
+                % Inform the user about not exporting the data
+                disp('No plot will be shown.');
+            % else, the input is not valid
+            else
+                % if input is not valid make the user repeat the input
+                plotRepeater = 0;
+                % clear command window
+                clc;
+                % Inform user about the error
+                disp(err.WrongInput);
+            end
+        end
+    else
+        disp(err.NoPlot)
+    end
+else
+    % else, don't show a plot
+    GraphIt = 0;
+end
 
-%% Export
+% create the plot if the user wants it
+if GraphIt == 1
+    % Multiplication Factor as Diagonal Matrix
+    DFactor = diag(1./UserInput.Mat(:,3));
+    % Calculating the Equation matrix z = a + bx + cy
+    Eqn = DFactor*[UserInput.Vec -UserInput.Mat(:,1:2)];
+    % Calculating the plot area to make sure to show the intersaction X
+    meshMax = max(max(2*ceil(abs(X(1:2)))),1);
+    % set the mesh steps
+    meshSteps = meshMax/15;
+    % generate a meshgrid
+    [x y] = meshgrid(-meshMax:meshSteps:meshMax);
+    % reset the random seed to keep the colors stable
+    rng default;
+    % for loop 1:m
+    for i = 1:m
+        % Define equation z_i
+        z = Eqn(i,1) + Eqn(i,2)*x + Eqn(i,3)*y;
+        % generate the legend
+        if Eqn(i,2) == 0
+            % if the matrix entry is zero don't add text
+            txtx2 = blanks(1);
+        elseif Eqn(i,2) < 0
+            % if it's below zero keep it as it is
+            txtx2 = [blanks(1), num2str(round(Eqn(i,2),2)), 'x'];
+        else
+            % if it's greater than zero add a plus
+            txtx2 = [' + ', num2str(round(Eqn(i,2),2)), 'x'];
+        end
+        if Eqn(i,3) == 0
+            % if the matrix entry is zero don't add text
+            txtx3 = blanks(1);
+        elseif Eqn(i,3) < 0
+            % if it's below zero keep it as it is
+            txtx3 = [blanks(1), num2str(round(Eqn(i,3),2)), 'y'];
+        else
+            % if it's greater than zero add a plus
+            txtx3 = [' +', num2str(round(Eqn(i,3),2)), 'y'];
+        end
+        % generate the full legend entry
+        txt = ['z = ', num2str(round(Eqn(i,1),2)), txtx2, txtx3];
+        % generate handles for the plot with legend text and a random color
+        handles.HSurf(i) = [surf(x,y,z, 'DisplayName', txt,...
+            'FaceColor', rand(1,3))];
+        % set hold on to add multiple plots into one figure
+        hold on;
+    end
+    % show the legend
+    legend show;
+    % set the x-Label to x
+    xlabel('x');
+    % set the y-Label to y
+    ylabel('y');
+    % set the z-Label to z and deactivate auto rotation
+    zlabel('z', 'Rotation', 0);
+    % set the size and position of the figure
+    h=gcf;
+    set(h, 'units','normalized','outerposition',[0.5 0.05 0.5 0.95]);
+    %% Export the Plot
+    % repeater to re-prompt the user until a valid input is given
+    ExportRepeater = 0;
+    % while 'repeater' is not TRUE
+    while ~ExportRepeater
+    % ask the user if the data should be exported
+        Export = input(['\n\nDo you want to export the plot as SVG? '...
+            '(y/n)\n\n'], 's');
+        % save string in lowercase letters
+        Export = lower(Export);
+        % check if the user wants to export the plot
+        if Export == 'y'
+            % if TRUE export the plot
+            ExportRepeater = 1;
+            % clear command window
+            clc;
+            % rerun the plot in case the user has closed it and the handle
+            % is lost
+            % close all windows
+            close all;
+            % reset the random seed to keep the colors stable
+            rng default;
+            % for loop 1:m
+            for i = 1:m
+                % Define equation z_i
+                z = Eqn(i,1) + Eqn(i,2)*x + Eqn(i,3)*y;
+                % generate the legend
+                if Eqn(i,2) == 0
+                    % if the matrix entry is zero don't add text
+                    txtx2 = blanks(1);
+                elseif Eqn(i,2) < 0
+                    % if it's below zero keep it as it is
+                    txtx2 = [blanks(1), num2str(round(Eqn(i,2),2)), 'x'];
+                else
+                    % if it's greater than zero add a plus
+                    txtx2 = [' + ', num2str(round(Eqn(i,2),2)), 'x'];
+                end
+                if Eqn(i,3) == 0
+                    % if the matrix entry is zero don't add text
+                    txtx3 = blanks(1);
+                elseif Eqn(i,3) < 0
+                    % if it's below zero keep it as it is
+                    txtx3 = [blanks(1), num2str(round(Eqn(i,3),2)), 'y'];
+                else
+                    % if it's greater than zero add a plus
+                    txtx3 = [' +', num2str(round(Eqn(i,3),2)), 'y'];
+                end
+                % generate the full legend entry
+                txt = ['z = ', num2str(round(Eqn(i,1),2)), txtx2, txtx3];
+                % generate handles for the plot with legend text and a random color
+                handles.HSurf(i) = [surf(x,y,z, 'DisplayName', txt,...
+                    'FaceColor', rand(1,3))];
+                % set hold on to add multiple plots into one figure
+                hold on;
+            end
+            % show the legend
+            legend show;
+            % set the x-Label to x
+            xlabel('x');
+            % set the y-Label to y
+            ylabel('y');
+            % set the z-Label to z and deactivate auto rotation
+            zlabel('z', 'Rotation', 0);
+            % set the size and position of the figure
+            h=gcf;
+            set(h, 'units','normalized','outerposition',[0.5 0.05 0.5 0.95])
+            % Export the Plot as svg
+            saveas(gcf,'SurfPlot.svg')
+            % Inform the user about the export
+            disp('The plot has been exported.');
+        % if he does not want to export the data
+        elseif Export == 'n'
+            % if TRUE export the data
+            ExportRepeater = 1;
+            % clear command window
+            clc;
+            % Inform the user about not exporting the plot
+            disp('The plot has not been exported.');
+        % else, the input is not valid
+        else
+            % if input is not valid make the user repeat the input
+            ExportRepeater = 0;
+            % clear command window
+            clc;
+            % Inform user about the error
+            disp(err.WrongInput);
+        end
+    end
+end
+
+clearvars -except err m UserInput X;

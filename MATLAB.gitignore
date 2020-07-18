@@ -32,3 +32,4 @@ octave-workspace
 
 # Data Exports
 *.csv
+*.svg
