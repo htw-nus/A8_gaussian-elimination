@@ -10,6 +10,9 @@
 % Output: clean 3x3-Matrix and a clean 3x1-Vector
 % This Script solves the given system of linear equations if
 % it has only one solution
+% you can choose if you want to plot your matrix
+    % if all elements in the 3rd column of your
+    % matrix are nonzero
 % you can choose if you want to export the Input Data and the Solution
 
 %% Clean Up
