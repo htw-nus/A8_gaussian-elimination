@@ -7,13 +7,16 @@
         % contains non-numeric values
     % transposes a 1x3-Vector into a 3x1-Vector
     % Valid Input sizes can be changed in the variables section as desired
-% Output: clean 3x3-Matrix and a clean 3x1-Vector
+% you can choose if you want to export the Input Data and the Solution:
+    % clean 3x3-Matrix A as CSV
+    % clean 3x1-Vector b as CSV
+    % solution x as CSV
 % This Script solves the given system of linear equations if
 % it has only one solution
-% you can choose if you want to plot your matrix
+% you can choose if you want to plot your matrix and if you want to export
+% it as SVG
     % if all elements in the 3rd column of your
     % matrix are nonzero
-% you can choose if you want to export the Input Data and the Solution
 
 %% Clean Up
 
@@ -25,6 +28,7 @@ clearvars;
 close all;
 
 %% Welcome Text
+
 % The text
 welcome = sprintf(['This program solves a system of linear equations Ax = b\n'...
     'by using the gaussian elimination with row equilibration '...
@@ -34,6 +38,7 @@ disp(welcome);
 
 
 %% Frame conditions
+
 % repeater to restart the solver if the solution is not valid
 ScriptRepeater = 0;
 while ~ScriptRepeater
@@ -116,7 +121,9 @@ end
 % clear command window
 clc;
 
+
 %% Input Vector
+
 % while 'repeater' is not TRUE
 while ~VecRepeater
 % ask the user to input a 3x1-Vector with instructions
@@ -161,11 +168,13 @@ clc;
 
 
 %% Row Scaling
+
 % Calculation of the diagonal matrix
 D = diag(1./sum(abs(UserInput.Mat),2));
 % Scaling the Input with the diagonal matrix
 ScalMat = D * UserInput.Mat;
 ScalVec = D * UserInput.Vec;
+
 
 %% Pivoting
 % Determining the descending order of the absolute of the
@@ -233,7 +242,9 @@ else
 end
 end
 
+
 %% Export Data
+
 % Error Messages
 % not a y/n Input
 err.WrongInput = sprintf(['Error.\n I could not understand you.'...
@@ -285,6 +296,7 @@ clearvars -except err m UserInput X;
 
 
 %% Plot
+
 % Only show a plot if the third column contains no zeros
 err.NoPlot = sprintf(['If you want to see a plot, please enter a Matrix\n'...
     'with only nonzero elements in the third column.\n\n']);
@@ -489,4 +501,4 @@ if GraphIt == 1
     end
 end
 
-clearvars -except err m UserInput X;
+clearvars -except UserInput X;
