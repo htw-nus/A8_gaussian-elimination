@@ -177,6 +177,7 @@ ScalVec = D * UserInput.Vec;
 
 
 %% Pivoting
+
 % Determining the descending order of the absolute of the
 % first element of each row
 [~, order] = sort(abs(ScalMat(:,1)), 'descend');
@@ -220,7 +221,8 @@ for i = m-1:-1:1
    % elements of x and the corresponding row of the Gauss Matrix
    % from the corresponding element of the Gauss Vector and dividing
    % the outcome by the matrix element i,i
-   X(i,:) = (GaussVec(i,:) - GaussMat(i,i+1:m)*X(i+1:m,:))/GaussMat(i,i);
+   X(i,:) = ((GaussVec(i,:) -...
+       GaussMat(i,i+1:m)*X(i+1:m,:))/GaussMat(i,i));
 end
 
 % clear unnecessary vars
