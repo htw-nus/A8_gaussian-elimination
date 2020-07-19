@@ -476,7 +476,7 @@ if GraphIt == 1
         h=gcf;
         set(h, 'units','normalized','outerposition',[0.5 0.05 0.5 0.95])
         % Export the Plot as svg
-        saveas(gcf,'SurfPlot.svg')
+        saveas(gcf,'SurfPlot.svg', 'svg')
         % Inform the user about the export
         disp('The plot has been exported.');
     % if the user does not want to export the data
