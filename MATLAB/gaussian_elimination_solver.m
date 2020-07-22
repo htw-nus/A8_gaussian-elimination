@@ -195,14 +195,14 @@ GaussMat = OrdMat;
 % and a new vector
 GaussVec = OrdVec;
 % for loop over m-1 elements
-for i = 1:m-1
+for idx = 1:m-1
    % Calculating the Row Multiplier by dividing the i Element of the
    % row i+1:m through the i,i Element of the matrix
-   Mult = GaussMat(i+1:m,i) / GaussMat(i,i);
+   Mult = GaussMat(idx+1:m,idx) / GaussMat(idx,idx);
    % Calculating the new rows of the matrix
-   GaussMat(i+1:m,:) = GaussMat(i+1:m,:) - Mult*GaussMat(i,:);
+   GaussMat(idx+1:m,:) = GaussMat(idx+1:m,:) - Mult*GaussMat(idx,:);
    % and the vector
-   GaussVec(i+1:m,:) = GaussVec(i+1:m,:) - Mult*GaussVec(i,:);
+   GaussVec(idx+1:m,:) = GaussVec(idx+1:m,:) - Mult*GaussVec(idx,:);
 end
 
 % removing rounding errors near zero
@@ -216,13 +216,13 @@ X = zeros(m,1);
 % determining the first element of the solution
 X(m,:) = GaussVec(m,:)/GaussMat(m,m);
 % for loop over the missing solutions
-for i = m-1:-1:1
+for idx = m-1:-1:1
    % Calculating the i element of x by substracting product of the known
    % elements of x and the corresponding row of the Gauss Matrix
    % from the corresponding element of the Gauss Vector and dividing
    % the outcome by the matrix element i,i
-   X(i,:) = ((GaussVec(i,:) -...
-       GaussMat(i,i+1:m)*X(i+1:m,:))/GaussMat(i,i));
+   X(idx,:) = ((GaussVec(idx,:) -...
+       GaussMat(idx,idx+1:m)*X(idx+1:m,:))/GaussMat(idx,idx));
 end
 
 % clear unnecessary vars
@@ -300,46 +300,60 @@ promptMessage = sprintf([ExpTxt...
     '\nsystem of linear equations?']);
 % Define the prompt titel
 titleBarCaption = 'Plot';
-% create uifigure for the prompt
-fig = uifigure;
 % Only show a plot if the third column contains no zeros
-err.NoPlot = sprintf(['If you want to see a plot, please enter a Matrix\n'...
-    'with only nonzero elements in the third column.\n\n']);
+err.NoPlot = sprintf(['\nIf you want to see a plot, please enter a '...
+    'Matrix A and\nwith only nonzero elements in the third column.\n\n']);
+% Only show a plot if X is real
+err.NoPlotReal = sprintf(['\nIf you want to see a plot, please enter a '...
+    'Matrix A and\na Vector b with only real elements.\n\n']);
 % Variable if User wants to see the plot
 GraphIt = 0;
 % Check if third column contains zeros
 ZeroCheck = sum(UserInput.Mat(:,3) == 0);
 % Only show a plot if m = 3
 if m == 3
-    % Only show a plot if the input can be solved for z
-    if ZeroCheck == 0
-        % ask the user if a plot should be shown
-        PlotIt = uiconfirm(fig, promptMessage, titleBarCaption,...
-        ... Define Buttons
-        'Options', {'Yes', 'No'},...
-        'DefaultOption', 1, 'CancelOption', 2,...
-        ... Close the figure after an answer is given
-        'CloseFcn',@(h,e) close(fig));
-        % check if the user wants to export the data
-        if strcmpi(PlotIt, 'Yes')
-            % Variable to show the Plot
-            GraphIt = 1;
-            % clear command window
-            clc;
-            % Inform the user about the plot
-            PltTxt = 'Your plot will open in a seperate window.';
-        % if the user does not want to see a plot
+    if isreal(X)
+        % Only show a plot if the input can be solved for z
+        if ZeroCheck == 0
+            % create uifigure for the prompt
+            fig = uifigure;
+            % ask the user if a plot should be shown
+            PlotIt = uiconfirm(fig, promptMessage, titleBarCaption,...
+            ... Define Buttons
+            'Options', {'Yes', 'No'},...
+            'DefaultOption', 1, 'CancelOption', 2,...
+            ... Close the figure after an answer is given
+            'CloseFcn',@(h,e) close(fig));
+            % check if the user wants to export the data
+            if strcmpi(PlotIt, 'Yes')
+                % Variable to show the Plot
+                GraphIt = 1;
+                % clear command window
+                clc;
+                % Inform the user about the plot
+                PltTxt = 'Your plot will open in a seperate window.';
+            % if the user does not want to see a plot
+            else
+                % clear command window
+                clc;
+                % Inform the user about not exporting the data
+                disp('No plot will be shown.');
+            end
         else
-            % clear command window
-            clc;
-            % Inform the user about not exporting the data
-            disp('No plot will be shown.');
+            % else, don't show a plot
+            GraphIt = 0;
+            % Inform the user about his choice for the Export
+            disp(ExpTxt);
+            % Inform the user about not being able to create a plot
+            disp(err.NoPlot);
         end
     else
+        % else, don't show a plot
+        GraphIt = 0;
         % Inform the user about his choice for the Export
         disp(ExpTxt);
         % Inform the user about not being able to create a plot
-        disp(err.NoPlot);
+        disp(err.NoPlotReal);
     end
 else
     % else, don't show a plot
@@ -361,34 +375,34 @@ if GraphIt == 1
     % reset the random seed to keep the colors stable
     rng default;
     % for loop 1:m
-    for i = 1:m
+    for idx = 1:m
         % Define equation z_i
-        z = Eqn(i,1) + Eqn(i,2)*x + Eqn(i,3)*y;
+        z = Eqn(idx,1) + Eqn(idx,2)*x + Eqn(idx,3)*y;
         % generate the legend
-        if Eqn(i,2) == 0
+        if Eqn(idx,2) == 0
             % if the matrix entry is zero don't add text
             txtx2 = blanks(1);
-        elseif Eqn(i,2) < 0
+        elseif Eqn(idx,2) < 0
             % if it's below zero keep it as it is
-            txtx2 = [blanks(1), num2str(round(Eqn(i,2),2)), 'x1'];
+            txtx2 = [blanks(1), num2str(round(Eqn(idx,2),2)), 'x1'];
         else
             % if it's greater than zero add a plus
-            txtx2 = [' + ', num2str(round(Eqn(i,2),2)), 'x1'];
+            txtx2 = [' + ', num2str(round(Eqn(idx,2),2)), 'x1'];
         end
-        if Eqn(i,3) == 0
+        if Eqn(idx,3) == 0
             % if the matrix entry is zero don't add text
             txtx3 = blanks(1);
-        elseif Eqn(i,3) < 0
+        elseif Eqn(idx,3) < 0
             % if it's below zero keep it as it is
-            txtx3 = [blanks(1), num2str(round(Eqn(i,3),2)), 'x2'];
+            txtx3 = [blanks(1), num2str(round(Eqn(idx,3),2)), 'x2'];
         else
             % if it's greater than zero add a plus
-            txtx3 = [' +', num2str(round(Eqn(i,3),2)), 'x2'];
+            txtx3 = [' +', num2str(round(Eqn(idx,3),2)), 'x2'];
         end
         % generate the full legend entry
-        txt = ['x3 = ', num2str(round(Eqn(i,1),2)), txtx2, txtx3];
+        txt = ['x3 = ', num2str(round(Eqn(idx,1),2)), txtx2, txtx3];
         % generate handles for the plot with legend text and a random color
-        handles.HSurf(i) = [surf(x,y,z, 'DisplayName', txt,...
+        handles.HSurf(idx) = [surf(x,y,z, 'DisplayName', txt,...
             'FaceColor', rand(1,3))];
         % set hold on to add multiple plots into one figure
         hold on;
@@ -432,34 +446,34 @@ if GraphIt == 1
         % reset the random seed to keep the colors stable
         rng default;
         % for loop 1:m
-        for i = 1:m
+        for idx = 1:m
             % Define equation z_i
-            z = Eqn(i,1) + Eqn(i,2)*x + Eqn(i,3)*y;
+            z = Eqn(idx,1) + Eqn(idx,2)*x + Eqn(idx,3)*y;
             % generate the legend
-            if Eqn(i,2) == 0
+            if Eqn(idx,2) == 0
                 % if the matrix entry is zero don't add text
                 txtx2 = blanks(1);
-            elseif Eqn(i,2) < 0
+            elseif Eqn(idx,2) < 0
                 % if it's below zero keep it as it is
-                txtx2 = [blanks(1), num2str(round(Eqn(i,2),2)), 'x1'];
+                txtx2 = [blanks(1), num2str(round(Eqn(idx,2),2)), 'x1'];
             else
                 % if it's greater than zero add a plus
-                txtx2 = [' + ', num2str(round(Eqn(i,2),2)), 'x1'];
+                txtx2 = [' + ', num2str(round(Eqn(idx,2),2)), 'x1'];
             end
-            if Eqn(i,3) == 0
+            if Eqn(idx,3) == 0
                 % if the matrix entry is zero don't add text
                 txtx3 = blanks(1);
-            elseif Eqn(i,3) < 0
+            elseif Eqn(idx,3) < 0
                 % if it's below zero keep it as it is
-                txtx3 = [blanks(1), num2str(round(Eqn(i,3),2)), 'x2'];
+                txtx3 = [blanks(1), num2str(round(Eqn(idx,3),2)), 'x2'];
             else
                 % if it's greater than zero add a plus
-                txtx3 = [' +', num2str(round(Eqn(i,3),2)), 'x2'];
+                txtx3 = [' +', num2str(round(Eqn(idx,3),2)), 'x2'];
             end
             % generate the full legend entry
-            txt = ['x3 = ', num2str(round(Eqn(i,1),2)), txtx2, txtx3];
+            txt = ['x3 = ', num2str(round(Eqn(idx,1),2)), txtx2, txtx3];
             % generate handles for the plot with legend text and a random color
-            handles.HSurf(i) = [surf(x,y,z, 'DisplayName', txt,...
+            handles.HSurf(idx) = [surf(x,y,z, 'DisplayName', txt,...
                 'FaceColor', rand(1,3))];
             % set hold on to add multiple plots into one figure
             hold on;
