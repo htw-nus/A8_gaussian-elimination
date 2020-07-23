@@ -407,6 +407,14 @@ if GraphIt == 1
         % set hold on to add multiple plots into one figure
         hold on;
     end
+    % show the point of intersection which is the solution X
+    plot3(X(1),X(2),X(3),...
+        '-o','Color','r',...
+        'MarkerSize',8,...
+        'MarkerFaceColor','#FF0000',...
+        'DisplayName', 'Point of Intersection = x');
+    % set hold on to add multiple plots into one figure
+    hold on;
     % show the legend
     legend show;
     % set the x-Label to x
@@ -478,6 +486,14 @@ if GraphIt == 1
             % set hold on to add multiple plots into one figure
             hold on;
         end
+        % show the point of intersection which is the solution X
+        plot3(X(1),X(2),X(3),...
+            '-o','Color','r',...
+            'MarkerSize',8,...
+            'MarkerFaceColor','#FF0000',...
+            'DisplayName', 'Point of Intersection = x');
+        % set hold on to add multiple plots into one figure
+        hold on;
         % show the legend
         legend show;
         % set the x-Label to x
